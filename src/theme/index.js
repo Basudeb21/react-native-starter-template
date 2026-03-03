@@ -1,0 +1,3 @@
+// src\theme\index.js
+export { default as useTheme } from "./useTheme";
+export { default as ThemeProvider } from "./ThemeProvider";

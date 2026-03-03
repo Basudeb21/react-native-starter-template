@@ -1,0 +1,219 @@
+/**
+ * 📌 App Usage & Syntax Reference
+ * 
+ * This file contains common usage examples for Redux, API, Permissions,
+ * AsyncStorage, theming, and other utilities.
+ */
+
+/** -----------------------------
+ * Section 1 – Redux Selectors
+ * -----------------------------
+ */
+import { useSelector, useDispatch } from 'react-redux';
+
+// Theme
+const isDarkMode = useSelector(state => state.theme.mode === 'dark');
+
+// Network
+const isConnected = useSelector(state => state.network.isConnected);
+
+
+/** -----------------------------
+ * Section 2 – Redux Dispatch
+ * -----------------------------
+ */
+import { toggleTheme } from '../store/slices/themeSlice';
+import { loginSuccess, logout } from '../store/slices/authSlice';
+
+const dispatch = useDispatch();
+
+// Toggle theme
+dispatch(toggleTheme());
+
+// Login / Logout
+dispatch(loginSuccess({ user, token }));
+dispatch(logout());
+
+
+/** -----------------------------
+ * Section 3 – Global Loading
+ * -----------------------------
+ */
+import { startGlobalLoading, stopGlobalLoading } from '../store/slices/loadingSlice';
+
+dispatch(startGlobalLoading());
+dispatch(stopGlobalLoading());
+
+
+/** -----------------------------
+ * Section 4 – Toasts via UI Slice
+ * -----------------------------
+ */
+import { showToast } from '../store/slices/uiSlice';
+
+const SomeScreen = () => {
+    const dispatch = useDispatch();
+
+    const handleClick = () => {
+        dispatch(showToast({ type: 'success', message: 'Operation Successful!' }));
+    };
+
+    return (
+        <Button title="Show Toast" onPress={handleClick} />
+    );
+};
+
+
+/** -----------------------------
+ * Section 5 – Network State Update
+ * -----------------------------
+ */
+import { setNetworkState } from '../store/slices/networkSlice';
+import { store } from '../store';
+
+store.dispatch(setNetworkState({
+    isConnected: true,
+    isInternetReachable: true,
+}));
+
+
+/** -----------------------------
+ * Section 6 – API Service Usage
+ * -----------------------------
+ */
+import { ApiService } from '../services/api';
+import API_ENDPOINTS from '../services/api/apiEndpoints';
+import { HTTP_STATUS } from '../services/api/api.status';
+
+// GET request
+const fetchProfile = async () => {
+    try {
+        const data = await ApiService.get(API_ENDPOINTS.PROFILE);
+        console.log('Profile:', data);
+    } catch (error) {
+        console.log('API Error:', error.message);
+    }
+};
+
+// POST request
+const login = async (email, password) => {
+    try {
+        const data = await ApiService.post(API_ENDPOINTS.LOGIN, { email, password });
+        console.log('Login success:', data);
+    } catch (error) {
+        if (error.status === HTTP_STATUS.UNAUTHORIZED) {
+            console.log('Unauthorized! Token expired.');
+        } else {
+            console.log('Login error:', error.message);
+        }
+    }
+};
+
+// File upload
+const uploadImage = async (file) => {
+    const formData = new FormData();
+    formData.append('file', {
+        uri: file.uri,
+        type: file.type,
+        name: file.name,
+    });
+
+    try {
+        const response = await ApiService.upload('/upload', formData);
+        console.log('Upload success:', response);
+    } catch (error) {
+        console.log('Upload failed:', error.message);
+    }
+};
+
+
+/** -----------------------------
+ * Section 7 – Permissions
+ * -----------------------------
+ */
+import PermissionService from '../services/permissions/permissions.service';
+
+// Single permission check
+const status = await PermissionService.check('CAMERA');
+
+// Request permission
+const requested = await PermissionService.request('CAMERA');
+
+// Ensure permission
+const result = await PermissionService.ensure('CAMERA');
+if (result.granted) console.log('Camera access granted!');
+
+// Ensure multiple permissions
+const multipleResult = await PermissionService.ensureMultiple(['CAMERA', 'MICROPHONE']);
+console.log(multipleResult);
+
+
+/** -----------------------------
+ * Section 8 – API Error Handling
+ * -----------------------------
+ */
+try {
+    const profile = await ApiService.get(API_ENDPOINTS.PROFILE);
+} catch (error) {
+    if (error.status === 401) {
+        console.log('Session expired. Redirect to login.');
+    } else {
+        console.log('Other error:', error.message);
+    }
+}
+
+
+/** -----------------------------
+ * Section 9 – Tabs Configuration
+ * -----------------------------
+ */
+const TAB_CONFIG = [
+    ...existingTabs,
+    {
+        name: 'NewTab',
+        component: NewScreen,
+        label: 'New',
+        icon: { active: 'star', inactive: 'star-outline' },
+    },
+];
+
+
+/** -----------------------------
+ * Section 10 – Theming
+ * -----------------------------
+ */
+import { Colors } from '../constants';
+
+<View style={{ backgroundColor: Colors.BACKGROUND, padding: 16 }}>
+    <Text style={{ color: Colors.TEXT_PRIMARY }}>Hello World</Text>
+</View>;
+
+
+/** -----------------------------
+ * Section 11 – AsyncStorage
+ * -----------------------------
+ */
+import STORAGE_KEYS from '../storage/storageKeys';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// Save data
+await AsyncStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, 'your_access_token');
+await AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(userData));
+
+// Read data
+const token = await AsyncStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
+const user = JSON.parse(await AsyncStorage.getItem(STORAGE_KEYS.USER));
+
+// Remove multiple keys
+await AsyncStorage.multiRemove([
+    STORAGE_KEYS.ACCESS_TOKEN,
+    STORAGE_KEYS.REFRESH_TOKEN,
+    STORAGE_KEYS.USER,
+]);
+
+
+/** -----------------------------
+ * Sections 12 & 13
+ * -----------------------------
+ * Reserved for future utilities, hooks, or custom services.
+ */

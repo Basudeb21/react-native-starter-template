@@ -1,0 +1,53 @@
+# React Native
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn-debug.log
+
+# React Native Packager
+.expo/
+.expo-shared/
+.expo-cache/
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# Android
+android/app/build/
+android/.gradle/
+android/.idea/
+android/local.properties
+*.iml
+*.hprof
+
+# iOS
+ios/Pods/
+ios/build/
+ios/DerivedData/
+*.xcworkspace
+*.xcodeproj/project.xcworkspace/
+*.xcodeproj/xcuserdata/
+*.xcuserstate
+
+# Misc
+.vscode/
+.idea/
+*.swp
+*.swo
+*.tmp
+*.temp
+*.bak
+*.orig
+
+# Testing / Coverage
+coverage/
+*.lcov
+
+# Env files
+.env
+.env.*
